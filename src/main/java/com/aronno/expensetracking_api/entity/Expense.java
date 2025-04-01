@@ -30,5 +30,4 @@ public class Expense {
     private String category;
 
     private Date date;
-
 }

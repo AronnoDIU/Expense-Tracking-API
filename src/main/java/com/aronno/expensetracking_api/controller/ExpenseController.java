@@ -4,6 +4,7 @@ import com.aronno.expensetracking_api.entity.Expense;
 import com.aronno.expensetracking_api.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,5 +18,10 @@ public class ExpenseController {
     public List<Expense> getExpenses() {
         expenseService.getAllExpenses();
         return expenseService.getAllExpenses();
+    }
+
+    @GetMapping("/expenses/{id}")
+    public Expense getExpenseById(@PathVariable("id") Long id) {
+        return expenseService.getExpenseById(id);
     }
 }
