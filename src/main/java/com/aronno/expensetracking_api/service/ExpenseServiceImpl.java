@@ -11,8 +11,12 @@ import java.util.Optional;
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
 
+    private final ExpenseRepository expenseRepository;
+
     @Autowired
-    private ExpenseRepository expenseRepository;
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository) {
+        this.expenseRepository = expenseRepository;
+    }
 
     @Override
     public List<Expense> getAllExpenses() {
