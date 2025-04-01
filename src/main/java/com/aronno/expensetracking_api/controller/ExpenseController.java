@@ -3,6 +3,7 @@ package com.aronno.expensetracking_api.controller;
 import com.aronno.expensetracking_api.entity.Expense;
 import com.aronno.expensetracking_api.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,9 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Expense>> getExpenses() {
+    public ResponseEntity<List<Expense>> getExpenses(Pageable page) {
         try {
-            List<Expense> expenses = expenseService.getAllExpenses();
+            List<Expense> expenses = expenseService.getAllExpenses(page).toList();
             return ResponseEntity.ok(expenses);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
