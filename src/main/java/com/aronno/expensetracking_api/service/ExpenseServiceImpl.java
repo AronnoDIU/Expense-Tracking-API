@@ -1,7 +1,7 @@
 package com.aronno.expensetracking_api.service;
 
 import com.aronno.expensetracking_api.entity.Expense;
-import com.aronno.expensetracking_api.exceptions.ExpenseNotFoundException;
+import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
 import com.aronno.expensetracking_api.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (expense.isPresent()) {
             return expense.get();
         } else {
-            throw new ExpenseNotFoundException("Expense not found with id: " + id);
+            throw new ResourceNotFoundException("Expense not found with id: " + id);
         }
     }
 
@@ -52,7 +52,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             updatedExpense.setDate(expense.getDate());
             return expenseRepository.save(updatedExpense);
         } else {
-            throw new ExpenseNotFoundException("Expense not found with id: " + id);
+            throw new ResourceNotFoundException("Expense not found with id: " + id);
         }
     }
 
@@ -62,7 +62,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (existingExpense.isPresent()) {
             expenseRepository.delete(existingExpense.get());
         } else {
-            throw new ExpenseNotFoundException("Expense not found with id: " + id);
+            throw new ResourceNotFoundException("Expense not found with id: " + id);
         }
     }
 }

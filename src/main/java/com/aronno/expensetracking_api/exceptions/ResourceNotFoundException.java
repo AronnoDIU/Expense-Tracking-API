@@ -2,12 +2,12 @@ package com.aronno.expensetracking_api.exceptions;
 
 import java.io.Serial;
 
-public class ExpenseNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ExpenseNotFoundException(String message) {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }
