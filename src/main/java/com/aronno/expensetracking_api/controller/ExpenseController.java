@@ -22,57 +22,31 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<Expense>> getExpenses(Pageable page) {
-        try {
-            List<Expense> expenses = expenseService.getAllExpenses(page).toList();
-            return ResponseEntity.ok(expenses);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        List<Expense> expenses = expenseService.getAllExpenses(page).toList();
+        return ResponseEntity.ok(expenses);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Expense> getExpenseById(@PathVariable("id") Long id) {
-        try {
-            Expense expense = expenseService.getExpenseById(id);
-            return ResponseEntity.ok(expense);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        Expense expense = expenseService.getExpenseById(id);
+        return ResponseEntity.ok(expense);
     }
 
     @PostMapping
     public ResponseEntity<Expense> createExpense(@RequestBody Expense expense) {
-        try {
-            Expense createdExpense = expenseService.createExpense(expense);
-            return ResponseEntity.status(201).body(createdExpense);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        Expense createdExpense = expenseService.createExpense(expense);
+        return ResponseEntity.status(201).body(createdExpense);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Expense> updateExpense(@PathVariable("id") Long id, @RequestBody Expense expense) {
-        try {
-            Expense updatedExpense = expenseService.updateExpense(id, expense);
-            return ResponseEntity.ok(updatedExpense);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        Expense updatedExpense = expenseService.updateExpense(id, expense);
+        return ResponseEntity.ok(updatedExpense);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteExpense(@PathVariable("id") Long id) {
-        try {
-            expenseService.deleteExpense(id);
-            return ResponseEntity.ok("Expense deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred while deleting the expense");
-        }
+        expenseService.deleteExpense(id);
+        return ResponseEntity.ok("Expense deleted successfully");
     }
 }
