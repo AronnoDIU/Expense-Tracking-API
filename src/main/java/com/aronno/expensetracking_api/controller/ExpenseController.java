@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,6 +32,20 @@ public class ExpenseController {
     public ResponseEntity<Expense> getExpenseById(@PathVariable("id") Long id) {
         Expense expense = expenseService.getExpenseById(id);
         return ResponseEntity.ok(expense);
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<List<Expense>> getExpensesByCategory(@RequestParam("category") String category, Pageable page) {
+        List<Expense> expenses = expenseService.getExpensesByCategory(category, page);
+        return ResponseEntity.ok(expenses);
+    }
+
+    @GetMapping("/date")
+    public ResponseEntity<List<Expense>> getExpensesByDateBetween(@RequestParam(required = false) Date startDate,
+                                                                  @RequestParam(required = false) Date endDate,
+                                                                  Pageable page) {
+        List<Expense> expenses = expenseService.getExpensesByDateRange(startDate, endDate, page);
+        return ResponseEntity.ok(expenses);
     }
 
     @PostMapping

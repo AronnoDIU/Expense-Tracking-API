@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,5 +66,23 @@ public class ExpenseServiceImpl implements ExpenseService {
         } else {
             throw new ResourceNotFoundException("Expense not found with id: " + id);
         }
+    }
+
+    @Override
+    public List<Expense> getExpensesByCategory(String category, Pageable page) {
+        return expenseRepository.findByCategory(category, page).toList();
+    }
+
+    @Override
+    public List<Expense> getExpensesByDateRange(Date startDate, Date endDate, Pageable page) {
+
+        if (startDate == null) {
+            startDate = new Date(0); // Default to epoch time if no start date is provided
+        }
+        if (endDate == null) {
+            endDate = new Date(System.currentTimeMillis());
+        }
+        
+        return expenseRepository.findByDateBetween(startDate, endDate, page).toList(); 
     }
 }
