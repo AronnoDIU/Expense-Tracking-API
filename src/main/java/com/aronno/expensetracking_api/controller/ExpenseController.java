@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<Expense> createExpense(@RequestBody Expense expense) {
+    public ResponseEntity<Expense> createExpense(@Valid @RequestBody Expense expense) {
         Expense createdExpense = expenseService.createExpense(expense);
         return ResponseEntity.status(201).body(createdExpense);
     }
