@@ -8,11 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
@@ -45,11 +41,21 @@ public class Expense {
 
     @SuppressWarnings("JpaDataSourceORMInspection")
     @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private Timestamp createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 
     @SuppressWarnings("JpaDataSourceORMInspection")
     @Column(name = "updated_at")
-    @UpdateTimestamp
-    private Timestamp updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 }
