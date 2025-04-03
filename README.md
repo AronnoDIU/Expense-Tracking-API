@@ -9,6 +9,7 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 - Spring Boot for rapid development
 - Lombok for reducing boilerplate code
 - Maven for project management and build automation
+- Spring Security for authentication and authorization
 
 ## Getting Started
 
@@ -27,12 +28,12 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
     ```
 
 2. Configure the database:
-   - Update the MySQL database configuration in `src/main/resources/application.properties`:
-       ```ini
-       spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
-       spring.datasource.username=root
-       spring.datasource.password=root
-       ```
+    - Update the MySQL database configuration in `src/main/resources/application.properties`:
+        ```ini
+        spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
+        spring.datasource.username=root
+        spring.datasource.password=root
+        ```
 
 3. Build the project:
     ```sh
@@ -45,6 +46,10 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
     ```
 
 ## API Endpoints
+
+### Authentication Endpoints
+- `POST /api/v1/auth/register` - Register a new user
+- `POST /api/v1/auth/login` - Login a user
 
 ### User Endpoints
 - `GET /api/v1/users` - Retrieve a list of all users
@@ -72,6 +77,7 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 
 - Spring Boot
 - Spring Data JPA
+- Spring Security
 - MySQL Connector
 - Lombok
 
