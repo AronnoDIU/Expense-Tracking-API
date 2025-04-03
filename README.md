@@ -1,10 +1,10 @@
 # Expense Tracking API
 
-This project is an Expense Tracking API built with Java and Spring Boot. It provides endpoints to manage expenses, using Spring Data JPA for MySQL database interactions.
+This project is an Expense Tracking API built with Java and Spring Boot. It provides endpoints to manage expenses and users, using Spring Data JPA for MySQL database interactions.
 
 ## Key Features
 
-- RESTful API for expense management
+- RESTful API for expense and user management
 - MySQL database integration
 - Spring Boot for rapid development
 - Lombok for reducing boilerplate code
@@ -27,12 +27,12 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
     ```
 
 2. Configure the database:
-    - Update the MySQL database configuration in `src/main/resources/application.properties`:
-        ```ini
-        spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
-        spring.datasource.username=root
-        spring.datasource.password=root
-        ```
+   - Update the MySQL database configuration in `src/main/resources/application.properties`:
+       ```ini
+       spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
+       spring.datasource.username=root
+       spring.datasource.password=root
+       ```
 
 3. Build the project:
     ```sh
@@ -46,7 +46,21 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 
 ## API Endpoints
 
-- `GET /expenses` - Retrieve a list of all expenses
+### User Endpoints
+- `GET /api/v1/users` - Retrieve a list of all users
+- `GET /api/v1/users/{id}` - Retrieve a user by ID
+- `POST /api/v1/users` - Create a new user
+- `PUT /api/v1/users/{id}` - Update a user by ID
+- `DELETE /api/v1/users/{id}` - Delete a user by ID
+
+### Expense Endpoints
+- `GET /api/v1/expenses` - Retrieve a list of all expenses
+- `GET /api/v1/expenses/{id}` - Retrieve an expense by ID
+- `GET /api/v1/expenses/category` - Retrieve expenses by category
+- `GET /api/v1/expenses/date` - Retrieve expenses by date range
+- `POST /api/v1/expenses` - Create a new expense
+- `PUT /api/v1/expenses/{id}` - Update an expense by ID
+- `DELETE /api/v1/expenses/{id}` - Delete an expense by ID
 
 ## Project Structure
 
