@@ -2,6 +2,7 @@ package com.aronno.expensetracking_api.service;
 
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
+import com.aronno.expensetracking_api.exceptions.UserAlreadyExistsException;
 import com.aronno.expensetracking_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException("User already exists with email: " + user.getEmail());
+        }
         return userRepository.save(user);
     }
 
