@@ -36,13 +36,9 @@ public class AuthController {
     public ResponseEntity<String> loginUser(@RequestParam String email, @RequestParam String password) {
         User user = userService.getUserByEmail(email);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            if (user.getRole().equals("USER")) {
-                return ResponseEntity.ok("Admin login successful");
-            }
+            return ResponseEntity.ok("User login successful");
         } else {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
-
-        return ResponseEntity.ok("User login successful");
     }
 }
