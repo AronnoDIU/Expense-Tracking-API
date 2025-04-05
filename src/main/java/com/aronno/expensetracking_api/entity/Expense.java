@@ -1,9 +1,12 @@
 package com.aronno.expensetracking_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -38,6 +41,13 @@ public class Expense {
 
     @NotNull(message = "Expense date cannot be null")
     private Date date;
+
+    @SuppressWarnings("JpaDataSourceORMInspection")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
     @SuppressWarnings("JpaDataSourceORMInspection")
     @Column(name = "created_at", nullable = false, updatable = false)
