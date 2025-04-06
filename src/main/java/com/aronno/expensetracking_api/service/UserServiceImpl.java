@@ -5,6 +5,7 @@ import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
 import com.aronno.expensetracking_api.exceptions.UserAlreadyExistsException;
 import com.aronno.expensetracking_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,6 +75,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
+        SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByEmail(email);
     }
 }

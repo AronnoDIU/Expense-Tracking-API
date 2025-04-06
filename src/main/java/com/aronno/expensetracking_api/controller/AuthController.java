@@ -3,8 +3,12 @@ package com.aronno.expensetracking_api.controller;
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,12 +18,15 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthController(
+            UserService userService,
+            AuthenticationManager authenticationManager
+    ) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/register")
@@ -27,18 +34,17 @@ public class AuthController {
         if (user.getPassword() == null) {
             return ResponseEntity.status(400).body(null);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User createdUser = userService.createUser(user);
         return ResponseEntity.status(201).body(createdUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody User loginRequest) {
-        User user = userService.getUserByEmail(loginRequest.getEmail());
-        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.ok("User login successful");
-        } else {
-            return ResponseEntity.status(401).body("Invalid email or password");
-        }
+    public ResponseEntity<HttpStatus> loginUser(@Valid @RequestBody User loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
