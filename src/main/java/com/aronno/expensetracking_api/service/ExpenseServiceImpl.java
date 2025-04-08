@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -19,27 +18,22 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final UserService userService;
 
     @Autowired
-    public ExpenseServiceImpl(
-            ExpenseRepository expenseRepository,
-            UserService userService
-    ) {
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, UserService userService) {
         this.expenseRepository = expenseRepository;
         this.userService = userService;
     }
 
     @Override
     public Page<Expense> getAllExpenses(Pageable page) {
-        return expenseRepository.findByUserId(userService.getLoggedInUser().getId(), page);
+        Long userId = userService.getLoggedInUser().getId();
+        return expenseRepository.findByUserId(userId, page);
     }
 
     @Override
     public Expense getExpenseById(Long id) {
-        Optional<Expense> expense = expenseRepository.findByIdAndUserId(id, userService.getLoggedInUser().getId());
-        if (expense.isPresent()) {
-            return expense.get();
-        } else {
-            throw new ResourceNotFoundException("Expense not found with id: " + id);
-        }
+        Long userId = userService.getLoggedInUser().getId();
+        return expenseRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found with id: " + id));
     }
 
     @Override
@@ -61,6 +55,32 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseRepository.save(existingExpense);
     }
 
+    @Override
+    public void deleteExpense(Long id) {
+        Expense expense = getExpenseById(id);
+        expenseRepository.delete(expense);
+    }
+
+    @Override
+    public List<Expense> getExpensesByCategory(String category, Pageable page) {
+        Long userId = userService.getLoggedInUser().getId();
+        return expenseRepository.findByCategoryAndUserId(category, userId, page).toList();
+    }
+
+    @Override
+    public List<Expense> getExpensesByDateRange(Date startDate, Date endDate, Pageable page) {
+        Long userId = userService.getLoggedInUser().getId();
+
+        if (startDate == null) {
+            startDate = new Date(0); // Default to epoch time if no start date is provided
+        }
+        if (endDate == null) {
+            endDate = new Date(System.currentTimeMillis());
+        }
+
+        return expenseRepository.findByDateBetweenAndUserId(startDate, endDate, userId, page).toList();
+    }
+
     /**
      * Helper method to update a field if the new value is not null.
      *
@@ -72,29 +92,5 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (newValue != null) {
             setter.accept(newValue);
         }
-    }
-
-    @Override
-    public void deleteExpense(Long id) {
-        Expense expense = getExpenseById(id);
-        expenseRepository.delete(expense);
-    }
-
-    @Override
-    public List<Expense> getExpensesByCategory(String category, Pageable page) {
-        return expenseRepository.findByCategory(category, page).toList();
-    }
-
-    @Override
-    public List<Expense> getExpensesByDateRange(Date startDate, Date endDate, Pageable page) {
-
-        if (startDate == null) {
-            startDate = new Date(0); // Default to epoch time if no start date is provided
-        }
-        if (endDate == null) {
-            endDate = new Date(System.currentTimeMillis());
-        }
-        
-        return expenseRepository.findByDateBetween(startDate, endDate, page).toList(); 
     }
 }

@@ -13,23 +13,25 @@ import java.util.Optional;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     /**
-     * Finds all expenses by category.
+     * Finds all expenses by category and user ID.
      *
      * @param category the category of the expense
+     * @param userId   the ID of the user
      * @param page     the pagination information
-     * @return a page of expenses with the specified category
+     * @return a page of expenses with the specified category and user ID
      */
-    Page<Expense> findByCategory(String category, Pageable page);
+    Page<Expense> findByCategoryAndUserId(String category, Long userId, Pageable page);
 
     /**
-     * Finds all expenses between the specified start and end dates.
+     * Finds all expenses between the specified start and end dates for a user.
      *
      * @param startDate the start date of the expense
      * @param endDate   the end date of the expense
+     * @param userId    the ID of the user
      * @param page      the pagination information
-     * @return a page of expenses between the specified dates
+     * @return a page of expenses between the specified dates for the user
      */
-    Page<Expense> findByDateBetween(Date startDate, Date endDate, Pageable page);
+    Page<Expense> findByDateBetweenAndUserId(Date startDate, Date endDate, Long userId, Pageable page);
 
     /**
      * Finds all expenses by user ID.
@@ -47,5 +49,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
      * @param userId the ID of the user
      * @return an optional containing the expense if found, or empty if not found
      */
-    Optional <Expense> findByIdAndUserId(Long id, Long userId);
+    Optional<Expense> findByIdAndUserId(Long id, Long userId);
 }
