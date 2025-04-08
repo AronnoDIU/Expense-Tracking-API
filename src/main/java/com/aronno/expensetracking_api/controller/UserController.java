@@ -3,6 +3,7 @@ package com.aronno.expensetracking_api.controller;
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user/profile")
 public class UserController {
 
     private final UserService userService;
@@ -21,14 +22,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    public ResponseEntity<User> getUser() {
+        User user = userService.getUser();
         return ResponseEntity.ok(user);
     }
 
@@ -38,15 +33,15 @@ public class UserController {
         return ResponseEntity.status(201).body(createdUser);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        User updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully");
+    @DeleteMapping("/delete")
+    public ResponseEntity<HttpStatus> deleteUser() {
+        userService.deleteUser();
+        return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
     }
 }

@@ -2,24 +2,15 @@ package com.aronno.expensetracking_api.service;
 
 import com.aronno.expensetracking_api.entity.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
     /**
-     * Retrieves all users from the database.
+     * Retrieves a user.
      *
-     * @return a list of all users
-     */
-    List<User> getAllUsers();
-
-    /**
-     * Retrieves a user by their ID.
-     *
-     * @param id the ID of the user to retrieve
      * @return the user with the specified ID
      */
-    User getUserById(Long id);
+    User getUser();
 
     /**
      * Creates a new user in the database.
@@ -32,18 +23,15 @@ public interface UserService {
     /**
      * Updates an existing user in the database.
      *
-     * @param id   the ID of the user to update
      * @param user the updated user information
      * @return the updated user
      */
-    User updateUser(Long id, User user);
+    User updateUser(User user);
 
     /**
-     * Deletes a user by their ID.
-     *
-     * @param id the ID of the user to delete
+     * Deletes a user from the database.
      */
-    void deleteUser(Long id);
+    void deleteUser();
 
     /**
      * Retrieves a user by their email address.

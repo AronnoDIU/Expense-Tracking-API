@@ -7,18 +7,13 @@ import com.aronno.expensetracking_api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -30,25 +25,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new ResourceNotFoundException("User not found with id: " + id);
-        }
+    public User getUser() {
+        return getLoggedInUser();
     }
 
     @Override
@@ -61,32 +39,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateUser(Long id, User user) {
-        Optional<User> existingUser = userRepository.findById(id);
-        if (existingUser.isPresent()) {
-            User updatedUser = existingUser.get();
-            updatedUser.setFirstName(user.getFirstName());
-            updatedUser.setLastName(user.getLastName());
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
-            updatedUser.setDateOfBirth(user.getDateOfBirth());
-            updatedUser.setRole(user.getRole());
-            updatedUser.setPhoneNumber(user.getPhoneNumber());
-            updatedUser.setAddress(user.getAddress());
-            return userRepository.save(updatedUser);
-        } else {
-            throw new ResourceNotFoundException("User not found with id: " + id);
-        }
+    public User updateUser(User user) {
+        User loggedInUser = getLoggedInUser();
+        loggedInUser.setFirstName(user.getFirstName());
+        loggedInUser.setLastName(user.getLastName());
+        loggedInUser.setEmail(user.getEmail());
+        loggedInUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        loggedInUser.setDateOfBirth(user.getDateOfBirth());
+        loggedInUser.setRole(user.getRole());
+        loggedInUser.setPhoneNumber(user.getPhoneNumber());
+        loggedInUser.setAddress(user.getAddress());
+        return userRepository.save(loggedInUser);
     }
 
     @Override
-    public void deleteUser(Long id) {
-        Optional<User> existingUser = userRepository.findById(id);
-        if (existingUser.isPresent()) {
-            userRepository.delete(existingUser.get());
-        } else {
-            throw new ResourceNotFoundException("User not found with id: " + id);
-        }
+    public void deleteUser() {
+        User user = getLoggedInUser();
+        userRepository.delete(user);
     }
 
     @Override
