@@ -3,6 +3,7 @@ package com.aronno.expensetracking_api.service;
 import com.aronno.expensetracking_api.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     /**
@@ -50,5 +51,12 @@ public interface UserService {
      * @param email the email address of the user to retrieve
      * @return the user with the specified email address
      */
-    User getUserByEmail(String email);
+    Optional<User> getUserByEmail(String email);
+
+    /**
+     * Retrieves the currently logged-in user.
+     *
+     * @return the currently logged-in user
+     */
+    User getLoggedInUser();
 }

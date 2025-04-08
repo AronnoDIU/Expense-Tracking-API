@@ -4,6 +4,8 @@ import com.aronno.expensetracking_api.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -16,10 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     /**
-     * Retrieves a user by their email address.
+     * Finds a user by their email address.
      *
      * @param email the email address of the user
-     * @return the user with the specified email address
+     * @return an Optional containing the user if found, or empty if not found
      */
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }
