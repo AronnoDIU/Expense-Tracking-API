@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> loginUser(@Valid @RequestBody User loginRequest) {
+    public ResponseEntity<String> loginUser(@Valid @RequestBody User loginRequest) {
         User user = userService.getUserByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + loginRequest.getEmail()));
 
@@ -57,6 +57,6 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok("Login successful");
     }
 }
