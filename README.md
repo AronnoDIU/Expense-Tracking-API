@@ -1,6 +1,6 @@
 # Expense Tracking API
 
-This project is an Expense Tracking API built with Java and Spring Boot. It provides endpoints to manage expenses and users, using Spring Data JPA for MySQL database interactions.
+This project is a comprehensive Expense Tracking API developed using Java and the Spring Boot framework. It is designed to facilitate the management of both expenses and user accounts through a set of well-defined RESTful API endpoints. The application leverages Spring Data JPA for seamless interaction with a MySQL database, ensuring efficient data storage and retrieval. By incorporating robust features such as authentication, authorization, and encrypted password storage, the API provides a secure and scalable solution for expense tracking and user management.
 
 ## Key Features
 
@@ -10,6 +10,7 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 - Lombok for reducing boilerplate code
 - Maven for project management and build automation
 - Spring Security for authentication and authorization
+- Encrypted password storage using `BCryptPasswordEncoder`
 
 ## Getting Started
 
@@ -28,12 +29,12 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
     ```
 
 2. Configure the database:
-    - Update the MySQL database configuration in `src/main/resources/application.properties`:
-        ```ini
-        spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
-        spring.datasource.username=root
-        spring.datasource.password=root
-        ```
+   - Update the MySQL database configuration in `src/main/resources/application.properties`:
+       ```ini
+       spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
+       spring.datasource.username=root
+       spring.datasource.password=root
+       ```
 
 3. Build the project:
     ```sh
@@ -48,14 +49,14 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 ## API Endpoints
 
 ### Authentication Endpoints
-- `POST /api/v1/auth/register` - Register a new user
-- `POST /api/v1/auth/login` - Login a user
+- `POST /api/v1/auth/register` - Register a new user (passwords are encrypted before storage)
+- `POST /api/v1/auth/login` - Login a user (passwords are validated using `BCryptPasswordEncoder`)
 
 ### User Endpoints
 - `GET /api/v1/users` - Retrieve a list of all users
 - `GET /api/v1/users/{id}` - Retrieve a user by ID
-- `POST /api/v1/users` - Create a new user
-- `PUT /api/v1/users/{id}` - Update a user by ID
+- `POST /api/v1/users` - Create a new user (passwords are encrypted before storage)
+- `PUT /api/v1/users/{id}` - Update a user by ID (passwords are encrypted before storage)
 - `DELETE /api/v1/users/{id}` - Delete a user by ID
 
 ### Expense Endpoints
@@ -66,6 +67,16 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 - `POST /api/v1/expenses` - Create a new expense
 - `PUT /api/v1/expenses/{id}` - Update an expense by ID
 - `DELETE /api/v1/expenses/{id}` - Delete an expense by ID
+
+## Security Features
+
+- **Password Encryption**: All user passwords are encrypted using `BCryptPasswordEncoder` before being stored in the database.
+- **Authentication**: Spring Security is used to authenticate users during login.
+- **Authorization**: Endpoints are secured, and only authenticated users can access protected resources.
+
+## Circular Dependency Resolution
+
+A circular dependency issue was resolved between `SecurityConfig` and `UserServiceImpl` by directly injecting `BCryptPasswordEncoder` into `UserServiceImpl` and avoiding dependency on `SecurityConfig`. This ensures a clean and maintainable architecture.
 
 ## Project Structure
 
@@ -84,6 +95,8 @@ This project is an Expense Tracking API built with Java and Spring Boot. It prov
 ## Troubleshooting
 
 If you encounter `java.lang.ExceptionInInitializerError` with `com.sun.tools.javac.code.TypeTag :: UNKNOWN`, ensure that your project is configured to use a compatible Java version. Check the `pom.xml` file and make sure the `java.version` property is set correctly.
+
+If you encounter a circular dependency error, ensure that the `spring.main.allow-circular-references` property is not set to `true` and verify the dependency injection setup in the `SecurityConfig` and `UserServiceImpl` classes.
 
 ## License
 
