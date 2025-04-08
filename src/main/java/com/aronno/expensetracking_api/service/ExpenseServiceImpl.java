@@ -29,12 +29,12 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Page<Expense> getAllExpenses(Pageable page) {
-        return expenseRepository.findAll(page);
+        return expenseRepository.findByUserId(userService.getLoggedInUser().getId(), page);
     }
 
     @Override
     public Expense getExpenseById(Long id) {
-        Optional<Expense> expense = expenseRepository.findById(id);
+        Optional<Expense> expense = expenseRepository.findByIdAndUserId(id, userService.getLoggedInUser().getId());
         if (expense.isPresent()) {
             return expense.get();
         } else {
@@ -50,28 +50,34 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Expense updateExpense(Long id, Expense expense) {
-        Optional<Expense> existingExpense = expenseRepository.findById(id);
-        if (existingExpense.isPresent()) {
-            Expense updatedExpense = existingExpense.get();
-            updatedExpense.setName(expense.getName());
-            updatedExpense.setDescription(expense.getDescription());
-            updatedExpense.setAmount(expense.getAmount());
-            updatedExpense.setCategory(expense.getCategory());
-            updatedExpense.setDate(expense.getDate());
-            return expenseRepository.save(updatedExpense);
-        } else {
-            throw new ResourceNotFoundException("Expense not found with id: " + id);
+        Expense existingExpense = getExpenseById(id);
+
+        updateFieldIfNotNull(expense.getName(), existingExpense::setName);
+        updateFieldIfNotNull(expense.getDescription(), existingExpense::setDescription);
+        updateFieldIfNotNull(expense.getAmount(), existingExpense::setAmount);
+        updateFieldIfNotNull(expense.getCategory(), existingExpense::setCategory);
+        updateFieldIfNotNull(expense.getDate(), existingExpense::setDate);
+
+        return expenseRepository.save(existingExpense);
+    }
+
+    /**
+     * Helper method to update a field if the new value is not null.
+     *
+     * @param newValue the new value to set
+     * @param setter   the setter method to call
+     * @param <T>      the type of the field
+     */
+    private <T> void updateFieldIfNotNull(T newValue, java.util.function.Consumer<T> setter) {
+        if (newValue != null) {
+            setter.accept(newValue);
         }
     }
 
     @Override
     public void deleteExpense(Long id) {
-        Optional<Expense> existingExpense = expenseRepository.findById(id);
-        if (existingExpense.isPresent()) {
-            expenseRepository.delete(existingExpense.get());
-        } else {
-            throw new ResourceNotFoundException("Expense not found with id: " + id);
-        }
+        Expense expense = getExpenseById(id);
+        expenseRepository.delete(expense);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.aronno.expensetracking_api.controller;
 
 import com.aronno.expensetracking_api.entity.User;
+import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
 import com.aronno.expensetracking_api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,8 +45,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> loginUser(@Valid @RequestBody User loginRequest) {
-        User user = userService.getUserByEmail(loginRequest.getEmail());
-        if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        User user = userService.getUserByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + loginRequest.getEmail()));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 

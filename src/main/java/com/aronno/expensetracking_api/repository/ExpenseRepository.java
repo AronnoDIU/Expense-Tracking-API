@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
@@ -29,4 +30,22 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
      * @return a page of expenses between the specified dates
      */
     Page<Expense> findByDateBetween(Date startDate, Date endDate, Pageable page);
+
+    /**
+     * Finds all expenses by user ID.
+     *
+     * @param userId the ID of the user
+     * @param page   the pagination information
+     * @return a page of expenses for the specified user
+     */
+    Page<Expense> findByUserId(Long userId, Pageable page);
+
+    /**
+     * Finds an expense by its ID and user ID.
+     *
+     * @param id     the ID of the expense
+     * @param userId the ID of the user
+     * @return an optional containing the expense if found, or empty if not found
+     */
+    Optional <Expense> findByIdAndUserId(Long id, Long userId);
 }
