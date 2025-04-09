@@ -53,26 +53,28 @@ This project is a comprehensive Expense Tracking API developed using Java and th
 - `POST /api/v1/auth/login` - Login a user (passwords are validated using `BCryptPasswordEncoder`)
 
 ### User Endpoints
-- `GET /api/v1/users` - Retrieve a list of all users
-- `GET /api/v1/users/{id}` - Retrieve a user by ID
-- `POST /api/v1/users` - Create a new user (passwords are encrypted before storage)
-- `PUT /api/v1/users/{id}` - Update a user by ID (passwords are encrypted before storage)
-- `DELETE /api/v1/users/{id}` - Delete a user by ID
+- `GET /api/v1/user/profile` - Retrieve the currently logged-in user's profile.
+- `POST /api/v1/user/profile` - Create a new user.
+- `PUT /api/v1/user/profile` - Update the currently logged-in user's profile.
+- `DELETE /api/v1/user/profile/delete` - Delete the currently logged-in user's profile.
 
 ### Expense Endpoints
-- `GET /api/v1/expenses` - Retrieve a list of all expenses
-- `GET /api/v1/expenses/{id}` - Retrieve an expense by ID
-- `GET /api/v1/expenses/category` - Retrieve expenses by category
-- `GET /api/v1/expenses/date` - Retrieve expenses by date range
-- `POST /api/v1/expenses` - Create a new expense
-- `PUT /api/v1/expenses/{id}` - Update an expense by ID
-- `DELETE /api/v1/expenses/{id}` - Delete an expense by ID
+- `GET /api/v1/expenses` - Retrieve a list of all expenses.
+- `GET /api/v1/expenses/{id}` - Retrieve an expense by ID.
+- `GET /api/v1/expenses/category?category={category}` - Retrieve expenses by category.
+- `GET /api/v1/expenses/date?startDate={startDate}&endDate={endDate}` - Retrieve expenses within a date range.
+- `POST /api/v1/expenses` - Create a new expense.
+- `PUT /api/v1/expenses/{id}` - Update an expense by ID.
+- `DELETE /api/v1/expenses/{id}` - Delete an expense by ID.
 
 ## Security Features
 
 - **Password Encryption**: All user passwords are encrypted using `BCryptPasswordEncoder` before being stored in the database.
 - **Authentication**: Spring Security is used to authenticate users during login.
 - **Authorization**: Endpoints are secured, and only authenticated users can access protected resources.
+
+### Security Context
+The application uses Spring Security's `SecurityContextHolder` to retrieve the currently logged-in user. This is utilized in the `UserServiceImpl` and `ExpenseServiceImpl` classes to ensure that operations are performed in the context of the authenticated user.
 
 ## Circular Dependency Resolution
 
