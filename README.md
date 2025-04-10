@@ -9,8 +9,10 @@ This project is a comprehensive Expense Tracking API developed using Java and th
 - Spring Boot for rapid development
 - Lombok for reducing boilerplate code
 - Maven for project management and build automation
-- Spring Security for authentication and authorization
+- Spring Security with custom UserDetailsService for authentication
 - Encrypted password storage using `BCryptPasswordEncoder`
+- Exception handling with detailed error responses
+- Pagination support for expense listing
 
 ## Getting Started
 
@@ -59,47 +61,95 @@ This project is a comprehensive Expense Tracking API developed using Java and th
 - `DELETE /api/v1/user/profile/delete` - Delete the currently logged-in user's profile.
 
 ### Expense Endpoints
-- `GET /api/v1/expenses` - Retrieve a list of all expenses.
-- `GET /api/v1/expenses/{id}` - Retrieve an expense by ID.
-- `GET /api/v1/expenses/category?category={category}` - Retrieve expenses by category.
-- `GET /api/v1/expenses/date?startDate={startDate}&endDate={endDate}` - Retrieve expenses within a date range.
-- `POST /api/v1/expenses` - Create a new expense.
-- `PUT /api/v1/expenses/{id}` - Update an expense by ID.
-- `DELETE /api/v1/expenses/{id}` - Delete an expense by ID.
+- `GET /expenses` - Retrieve a list of all expenses (paginated)
+- `GET /expenses/{id}` - Retrieve an expense by ID
+- `GET /expenses/category?category={category}` - Retrieve expenses by category
+- `GET /expenses/date?startDate={startDate}&endDate={endDate}` - Retrieve expenses within a date range
+- `POST /expenses` - Create a new expense
+  ```json
+  {
+    "description": "Grocery shopping",
+    "amount": 150.50,
+    "category": "GROCERIES",
+    "date": "2025-04-10"
+  }
+  ```
+- `PUT /expenses/{id}` - Update an expense by ID
+- `DELETE /expenses/{id}` - Delete an expense by ID
 
-## Security Features
+## Security Implementation
 
-- **Password Encryption**: All user passwords are encrypted using `BCryptPasswordEncoder` before being stored in the database.
-- **Authentication**: Spring Security is used to authenticate users during login.
-- **Authorization**: Endpoints are secured, and only authenticated users can access protected resources.
+### Authentication Flow
+1. User registration with encrypted password storage
+2. Custom UserDetailsService for loading user data
+3. DaoAuthenticationProvider for authentication
+4. JWT-based session management (coming soon)
 
-### Security Context
-The application uses Spring Security's `SecurityContextHolder` to retrieve the currently logged-in user. This is utilized in the `UserServiceImpl` and `ExpenseServiceImpl` classes to ensure that operations are performed in the context of the authenticated user.
+### Security Features
+- Password encryption using `BCryptPasswordEncoder`
+- Custom UserDetailsService implementation
+- Proper exception handling for authentication failures
+- Protected endpoints requiring authentication
+- CSRF protection disabled for API endpoints
 
-## Circular Dependency Resolution
+## Error Handling
 
-A circular dependency issue was resolved between `SecurityConfig` and `UserServiceImpl` by directly injecting `BCryptPasswordEncoder` into `UserServiceImpl` and avoiding dependency on `SecurityConfig`. This ensures a clean and maintainable architecture.
+The API provides detailed error responses in the following format:
+```json
+{
+    "statusCode": 400,
+    "message": "Error description",
+    "timestamp": "2025-04-10T15:30:00"
+}
+```
+
+Common error scenarios:
+- 400 Bad Request - Invalid input data
+- 401 Unauthorized - Invalid credentials
+- 403 Forbidden - Insufficient permissions
+- 404 Not Found - Resource not found
+- 500 Internal Server Error - Server-side issues
 
 ## Project Structure
 
-- `src/main/java/com/aronno/expensetracking_api` - Main source code
-- `src/main/resources` - Configuration files
-- `pom.xml` - Maven configuration file
+```
+src/main/java/com/aronno/expensetracking_api/
+├── config/
+│   └── SecurityConfig.java
+├── controller/
+│   ├── AuthController.java
+│   ├── UserController.java
+│   └── ExpenseController.java
+├── entity/
+│   ├── User.java
+│   └── Expense.java
+├── repository/
+│   ├── UserRepository.java
+│   └── ExpenseRepository.java
+├── service/
+│   ├── CustomUserDetailsService.java
+│   ├── UserService.java
+│   └── ExpenseService.java
+└── ExpenseTrackingApiApplication.java
+```
 
 ## Dependencies
 
-- Spring Boot
-- Spring Data JPA
-- Spring Security
-- MySQL Connector
+- Spring Boot Starter Web
+- Spring Boot Starter Data JPA
+- Spring Boot Starter Security
+- MySQL Connector Java
 - Lombok
+- Spring Boot Starter Validation
 
-## Troubleshooting
+## Contributing
 
-If you encounter `java.lang.ExceptionInInitializerError` with `com.sun.tools.javac.code.TypeTag :: UNKNOWN`, ensure that your project is configured to use a compatible Java version. Check the `pom.xml` file and make sure the `java.version` property is set correctly.
-
-If you encounter a circular dependency error, ensure that the `spring.main.allow-circular-references` property is not set to `true` and verify the dependency injection setup in the `SecurityConfig` and `UserServiceImpl` classes.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
