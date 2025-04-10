@@ -1,16 +1,15 @@
 package com.aronno.expensetracking_api.controller;
 
 import com.aronno.expensetracking_api.entity.User;
-import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
 import com.aronno.expensetracking_api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,17 +19,14 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
     public AuthController(
             UserService userService,
-            BCryptPasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager
     ) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
 
@@ -45,18 +41,21 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@Valid @RequestBody User loginRequest) {
-        User user = userService.getUserByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + loginRequest.getEmail()));
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return ResponseEntity.ok("Login successful");
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid email or password");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred during authentication");
         }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return ResponseEntity.ok("Login successful");
     }
 }
