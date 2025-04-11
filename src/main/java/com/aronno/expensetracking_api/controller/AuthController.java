@@ -1,6 +1,7 @@
 package com.aronno.expensetracking_api.controller;
 
 import com.aronno.expensetracking_api.dto.LoginRequest;
+import com.aronno.expensetracking_api.entity.ErrorObject;
 import com.aronno.expensetracking_api.entity.JwtResponse;
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.service.UserService;
@@ -18,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/auth")
@@ -77,47 +80,12 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             logger.error("Authentication failed for user: {}", loginRequest.getEmail(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("Invalid email or password", HttpStatus.UNAUTHORIZED.value()));
+                    .body(new ErrorObject(HttpStatus.UNAUTHORIZED.value(), "Invalid email or password", new Date()));
         } catch (Exception e) {
             logger.error("Error during authentication for user: {}", loginRequest.getEmail(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occurred during authentication: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+                    .body(new ErrorObject(HttpStatus.INTERNAL_SERVER_ERROR.value(), 
+                            "An error occurred during authentication: " + e.getMessage(), new Date()));
         }
-    }
-}
-
-class ErrorResponse {
-    private String message;
-    private int status;
-    private String timestamp;
-
-    public ErrorResponse(String message, int status) {
-        this.message = message;
-        this.status = status;
-        this.timestamp = java.time.LocalDate.now().toString();
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
     }
 }

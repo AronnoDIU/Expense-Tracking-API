@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/user/profile")
 public class UserController {
@@ -42,6 +40,6 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResponseEntity<HttpStatus> deleteUser() {
         userService.deleteUser();
-        return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

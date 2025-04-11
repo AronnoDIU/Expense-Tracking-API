@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.Date;
@@ -14,7 +13,7 @@ import java.sql.Date;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorObject> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleResourceNotFoundException(ResourceNotFoundException ex) {
 
         ErrorObject errorObject = new ErrorObject();
 
@@ -26,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorObject> handleUserAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
 
         ErrorObject errorObject = new ErrorObject();
 
@@ -38,7 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorObject> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
 
         ErrorObject errorObject = new ErrorObject();
 
@@ -50,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorObject> handleException(Exception ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleException(Exception ex) {
 
         ErrorObject errorObject = new ErrorObject();
 

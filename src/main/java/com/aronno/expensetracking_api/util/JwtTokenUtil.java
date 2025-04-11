@@ -1,7 +1,6 @@
 package com.aronno.expensetracking_api.util;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,7 @@ public class JwtTokenUtil {
 
     @Value("${jwt.secret}")
     private String secretKeyString;
-    
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = secretKeyString.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

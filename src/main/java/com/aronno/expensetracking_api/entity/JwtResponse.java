@@ -3,7 +3,9 @@ package com.aronno.expensetracking_api.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @NoArgsConstructor
 public class JwtResponse {
@@ -11,10 +13,6 @@ public class JwtResponse {
     private String jwtToken;
 
     public JwtResponse(String jwtToken) {
-        this.jwtToken = jwtToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
     }
 }
