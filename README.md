@@ -21,8 +21,7 @@
 
 - Java 21
 - Spring Boot 3.x
-- Spring Security
-- JSON Web Tokens (JWT)
+- Spring Security with JWT
 - MySQL 8
 - Maven
 - Lombok
@@ -46,23 +45,54 @@
    - Create a database named `expense_tracking`
    - Update `src/main/resources/application.properties` with your MySQL credentials if different
 
-3. **Build the project**
+3. **Update JWT Secret**
+   - In `application.properties`, update the JWT secret key:
+     ```properties
+     jwt.secret=your_secure_secret_key_here
+     ```
+
+4. **Build the project**
    ```bash
    mvn clean install
    ```
 
-4. **Run the application**
+5. **Run the application**
    ```bash
    mvn spring-boot:run
    ```
 
 The API will be available at `http://localhost:8080/api/v1`
 
-## API Endpoints
+## API Documentation
 
 ### Authentication
 - `POST /api/v1/auth/register` - Register a new user
+  ```json
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "dateOfBirth": "1990-01-01",
+    "role": "USER",
+    "phoneNumber": "1234567890",
+    "address": "123 Main St"
+  }
+  ```
+
 - `POST /api/v1/auth/login` - Login and get JWT token
+  ```json
+  {
+    "email": "john.doe@example.com",
+    "password": "password123"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "jwtToken": "eyJhbGciOiJIUzUxMiJ9..."
+  }
+  ```
 
 ### User Profile
 - `GET /api/v1/user/profile` - Get user profile
@@ -73,6 +103,15 @@ The API will be available at `http://localhost:8080/api/v1`
 - `GET /api/v1/expenses` - Get all expenses
 - `GET /api/v1/expenses/{id}` - Get expense by ID
 - `POST /api/v1/expenses` - Create new expense
+  ```json
+  {
+    "name": "Grocery Shopping",
+    "description": "Monthly groceries",
+    "amount": 150.50,
+    "category": "GROCERIES",
+    "date": "2025-04-11"
+  }
+  ```
 - `PUT /api/v1/expenses/{id}` - Update expense
 - `DELETE /api/v1/expenses/{id}` - Delete expense
 
@@ -83,6 +122,7 @@ The API will be available at `http://localhost:8080/api/v1`
 - Role-based authorization
 - Secure endpoints with Spring Security
 - Input validation and sanitization
+- Stateless session management
 
 ## Error Handling
 
@@ -91,7 +131,7 @@ The API uses a standardized error response format:
 {
   "status": 400,
   "message": "Error message here",
-  "timestamp": "2025-04-11T10:49:53+06:00"
+  "timestamp": "2025-04-11T18:26:20+06:00"
 }
 ```
 
@@ -102,7 +142,7 @@ The API uses a standardized error response format:
 - first_name
 - last_name
 - email (Unique)
-- password
+- password (BCrypt encoded)
 - date_of_birth
 - role
 - phone_number
