@@ -1,4 +1,4 @@
-package com.aronno.expensetracking_api.service;
+package com.aronno.expensetracking_api.security;
 
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.repository.UserRepository;
