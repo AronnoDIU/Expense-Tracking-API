@@ -2,12 +2,12 @@ package com.aronno.expensetracking_api.controller;
 
 import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         User updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }

@@ -2,12 +2,13 @@ package com.aronno.expensetracking_api.controller;
 
 import com.aronno.expensetracking_api.entity.Expense;
 import com.aronno.expensetracking_api.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -35,15 +36,20 @@ public class ExpenseController {
     }
 
     @GetMapping("/category")
-    public ResponseEntity<List<Expense>> getExpensesByCategory(@RequestParam("category") String category, Pageable page) {
+    public ResponseEntity<List<Expense>> getExpensesByCategory(
+            @RequestParam("category") String category,
+            Pageable page
+    ) {
         List<Expense> expenses = expenseService.getExpensesByCategory(category, page);
         return ResponseEntity.ok(expenses);
     }
 
     @GetMapping("/date")
-    public ResponseEntity<List<Expense>> getExpensesByDateBetween(@RequestParam(required = false) Date startDate,
-                                                                  @RequestParam(required = false) Date endDate,
-                                                                  Pageable page) {
+    public ResponseEntity<List<Expense>> getExpensesByDateBetween(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+            Pageable page
+    ) {
         List<Expense> expenses = expenseService.getExpensesByDateRange(startDate, endDate, page);
         return ResponseEntity.ok(expenses);
     }
@@ -55,7 +61,10 @@ public class ExpenseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Expense> updateExpense(@PathVariable("id") Long id, @RequestBody Expense expense) {
+    public ResponseEntity<Expense> updateExpense(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody Expense expense
+    ) {
         Expense updatedExpense = expenseService.updateExpense(id, expense);
         return ResponseEntity.ok(updatedExpense);
     }

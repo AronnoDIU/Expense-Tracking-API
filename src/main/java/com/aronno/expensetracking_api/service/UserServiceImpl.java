@@ -4,6 +4,8 @@ import com.aronno.expensetracking_api.entity.User;
 import com.aronno.expensetracking_api.exceptions.ResourceNotFoundException;
 import com.aronno.expensetracking_api.exceptions.UserAlreadyExistsException;
 import com.aronno.expensetracking_api.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,8 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -34,7 +38,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException("User already exists with email: " + user.getEmail());
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        
+        logger.debug("Encoding password for user: {}", user.getEmail());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        logger.debug("Password encoded successfully");
+        
         return userRepository.save(user);
     }
 
@@ -45,7 +54,12 @@ public class UserServiceImpl implements UserService {
         updateFieldIfNotNull(user.getFirstName(), loggedInUser::setFirstName);
         updateFieldIfNotNull(user.getLastName(), loggedInUser::setLastName);
         updateFieldIfNotNull(user.getEmail(), loggedInUser::setEmail);
-        updateFieldIfNotNull(user.getPassword(), password -> loggedInUser.setPassword(passwordEncoder.encode(password)));
+        if (user.getPassword() != null) {
+            logger.debug("Encoding updated password for user: {}", loggedInUser.getEmail());
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            loggedInUser.setPassword(encodedPassword);
+            logger.debug("Updated password encoded successfully");
+        }
         updateFieldIfNotNull(user.getDateOfBirth(), loggedInUser::setDateOfBirth);
         updateFieldIfNotNull(user.getRole(), loggedInUser::setRole);
         updateFieldIfNotNull(user.getPhoneNumber(), loggedInUser::setPhoneNumber);
@@ -73,13 +87,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     }
 
-    /**
-     * Updates a field of the user if the new value is not null.
-     *
-     * @param newValue the new value to set
-     * @param setter   the setter method to call
-     * @param <T>      the type of the field
-     */
     private <T> void updateFieldIfNotNull(T newValue, java.util.function.Consumer<T> setter) {
         if (newValue != null) {
             setter.accept(newValue);
