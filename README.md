@@ -1,155 +1,139 @@
 # Expense Tracking API
 
-This project is a comprehensive Expense Tracking API developed using Java and the Spring Boot framework. It is designed to facilitate the management of both expenses and user accounts through a set of well-defined RESTful API endpoints. The application leverages Spring Data JPA for seamless interaction with a MySQL database, ensuring efficient data storage and retrieval. By incorporating robust features such as authentication, authorization, and encrypted password storage, the API provides a secure and scalable solution for expense tracking and user management.
+A robust RESTful API for tracking personal expenses built with Spring Boot and MySQL.
 
-## Key Features
+## Features
 
-- RESTful API for expense and user management
-- MySQL database integration
-- Spring Boot for rapid development
-- Lombok for reducing boilerplate code
-- Maven for project management and build automation
-- Spring Security with custom UserDetailsService for authentication
-- Encrypted password storage using `BCryptPasswordEncoder`
-- Exception handling with detailed error responses
-- Pagination support for expense listing
+- User Authentication with JWT
+- User Profile Management
+- Expense Management (CRUD operations)
+- Secure API Endpoints
+- Input Validation
+- Error Handling
+- MySQL Database Integration
 
-## Getting Started
-
-### Prerequisites
+## Technologies
 
 - Java 21
+- Spring Boot 3.x
+- Spring Security
+- JSON Web Tokens (JWT)
+- MySQL 8
 - Maven
-- MySQL
+- Lombok
+- Hibernate/JPA
 
-### Installation
+## Prerequisites
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/AronnoDIU/Expense-Tracking_API.git
-    cd Expense-Tracking_API
-    ```
+- Java 21 or higher
+- MySQL 8.0 or higher
+- Maven 3.x
 
-2. Configure the database:
-   - Update the MySQL database configuration in `src/main/resources/application.properties`:
-       ```ini
-       spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
-       spring.datasource.username=root
-       spring.datasource.password=root
-       ```
+## Setup & Installation
 
-3. Build the project:
-    ```sh
-    mvn clean install
-    ```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AronnoDIU/Expense-Tracking-API.git
+   cd Expense-Tracking-API
+   ```
 
-4. Run the application:
-    ```sh
-    mvn spring-boot:run
-    ```
+2. **Configure MySQL**
+   - Create a database named `expense_tracking`
+   - Update `src/main/resources/application.properties` with your MySQL credentials if different
+
+3. **Build the project**
+   ```bash
+   mvn clean install
+   ```
+
+4. **Run the application**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+The API will be available at `http://localhost:8080/api/v1`
 
 ## API Endpoints
 
-### Authentication Endpoints
-- `POST /api/v1/auth/register` - Register a new user (passwords are encrypted before storage)
-- `POST /api/v1/auth/login` - Login a user (passwords are validated using `BCryptPasswordEncoder`)
+### Authentication
+- `POST /api/v1/auth/register` - Register a new user
+- `POST /api/v1/auth/login` - Login and get JWT token
 
-### User Endpoints
-- `GET /api/v1/user/profile` - Retrieve the currently logged-in user's profile.
-- `POST /api/v1/user/profile` - Create a new user.
-- `PUT /api/v1/user/profile` - Update the currently logged-in user's profile.
-- `DELETE /api/v1/user/profile/delete` - Delete the currently logged-in user's profile.
+### User Profile
+- `GET /api/v1/user/profile` - Get user profile
+- `PUT /api/v1/user/profile` - Update user profile
+- `DELETE /api/v1/user/profile` - Delete user account
 
-### Expense Endpoints
-- `GET /expenses` - Retrieve a list of all expenses (paginated)
-- `GET /expenses/{id}` - Retrieve an expense by ID
-- `GET /expenses/category?category={category}` - Retrieve expenses by category
-- `GET /expenses/date?startDate={startDate}&endDate={endDate}` - Retrieve expenses within a date range
-- `POST /expenses` - Create a new expense
-  ```json
-  {
-    "description": "Grocery shopping",
-    "amount": 150.50,
-    "category": "GROCERIES",
-    "date": "2025-04-10"
-  }
-  ```
-- `PUT /expenses/{id}` - Update an expense by ID
-- `DELETE /expenses/{id}` - Delete an expense by ID
+### Expenses
+- `GET /api/v1/expenses` - Get all expenses
+- `GET /api/v1/expenses/{id}` - Get expense by ID
+- `POST /api/v1/expenses` - Create new expense
+- `PUT /api/v1/expenses/{id}` - Update expense
+- `DELETE /api/v1/expenses/{id}` - Delete expense
 
-## Security Implementation
+## Security
 
-### Authentication Flow
-1. User registration with encrypted password storage
-2. Custom UserDetailsService for loading user data
-3. DaoAuthenticationProvider for authentication
-4. JWT-based session management (coming soon)
-
-### Security Features
-- Password encryption using `BCryptPasswordEncoder`
-- Custom UserDetailsService implementation
-- Proper exception handling for authentication failures
-- Protected endpoints requiring authentication
-- CSRF protection disabled for API endpoints
+- JWT-based authentication
+- Password encryption using BCrypt
+- Role-based authorization
+- Secure endpoints with Spring Security
+- Input validation and sanitization
 
 ## Error Handling
 
-The API provides detailed error responses in the following format:
+The API uses a standardized error response format:
 ```json
 {
-    "statusCode": 400,
-    "message": "Error description",
-    "timestamp": "2025-04-10T15:30:00"
+  "status": 400,
+  "message": "Error message here",
+  "timestamp": "2025-04-11T10:49:53+06:00"
 }
 ```
 
-Common error scenarios:
-- 400 Bad Request - Invalid input data
-- 401 Unauthorized - Invalid credentials
-- 403 Forbidden - Insufficient permissions
-- 404 Not Found - Resource not found
-- 500 Internal Server Error - Server-side issues
+## Database Schema
 
-## Project Structure
+### Users Table
+- id (Primary Key)
+- first_name
+- last_name
+- email (Unique)
+- password
+- date_of_birth
+- role
+- phone_number
+- address
+- created_at
+- updated_at
 
-```
-src/main/java/com/aronno/expensetracking_api/
-├── config/
-│   └── SecurityConfig.java
-├── controller/
-│   ├── AuthController.java
-│   ├── UserController.java
-│   └── ExpenseController.java
-├── entity/
-│   ├── User.java
-│   └── Expense.java
-├── repository/
-│   ├── UserRepository.java
-│   └── ExpenseRepository.java
-├── service/
-│   ├── CustomUserDetailsService.java
-│   ├── UserService.java
-│   └── ExpenseService.java
-└── ExpenseTrackingApiApplication.java
-```
-
-## Dependencies
-
-- Spring Boot Starter Web
-- Spring Boot Starter Data JPA
-- Spring Boot Starter Security
-- MySQL Connector Java
-- Lombok
-- Spring Boot Starter Validation
+### Expenses Table
+- id (Primary Key)
+- expense_name
+- description
+- expense_amount
+- category
+- expense_date
+- user_id (Foreign Key)
+- created_at
+- updated_at
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Author
+
+[YEASIR ARAFAT ARONNO](https://github.com/AronnoDIU)
+
+## Acknowledgments
+
+- Spring Boot Team
+- MySQL Team
+- All contributors
