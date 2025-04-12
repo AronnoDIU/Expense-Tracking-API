@@ -16,7 +16,8 @@ import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil {
-    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    @Value("${app.jwt.expiration-milliseconds}")
+    private long jwtExpirationMs;
 
     @Value("${jwt.secret}")
     private String secretKeyString;
@@ -33,7 +34,7 @@ public class JwtTokenUtil {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -51,20 +52,17 @@ public class JwtTokenUtil {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
-
-        final String username = getUsernameFromToken(jwtToken);
-
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String jwtToken) {
-        final Date expiration = getExpirationDateFromToken(jwtToken);
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
 
+    private boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
-    }
-
-    private Date getExpirationDateFromToken(String jwtToken) {
-        return getClaimFromToken(jwtToken, Claims::getExpiration);
     }
 }
