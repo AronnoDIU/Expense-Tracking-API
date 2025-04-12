@@ -161,6 +161,48 @@ The API uses a standardized error response format:
 - created_at
 - updated_at
 
+## Production Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- JDK 21 for building
+- Maven for building
+
+### Build and Deploy
+
+1. Build the application:
+```bash
+mvn clean package -DskipTests
+```
+
+2. Configure environment variables:
+Edit the `docker-compose.yml` file and update the following environment variables:
+- PROD_DB_USERNAME
+- PROD_DB_PASSWORD
+- JWT_SECRET
+- MYSQL_ROOT_PASSWORD
+
+3. Start the application:
+```bash
+docker-compose up -d
+```
+
+The application will be available at `http://your-domain:8080/api/v1`
+
+### Monitoring
+- Health check endpoint: `/api/v1/actuator/health`
+- Metrics endpoint: `/api/v1/actuator/metrics`
+
+### Logs
+Logs are stored in `/var/log/expense-tracking/application.log`
+
+### Security Notes
+- Always change default passwords in production
+- Use HTTPS in production
+- Regularly update dependencies
+- Monitor application metrics and logs
+- Set up proper backup for the database
+
 ## Contributing
 
 1. Fork the repository
