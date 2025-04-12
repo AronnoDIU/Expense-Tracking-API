@@ -10,156 +10,78 @@
 ## Features
 
 - User Authentication with JWT
-- User Profile Management
 - Expense Management (CRUD operations)
-- Secure API Endpoints
-- Input Validation
-- Error Handling
-- MySQL Database Integration
+- Category Management
+- Rate Limiting
+- Caching for improved performance
+- Production-ready configuration
+- API Documentation
+- Monitoring with Spring Actuator
 
-## Technologies
+## Tech Stack
 
 - Java 21
-- Spring Boot 3.x
+- Spring Boot 3.4.4
 - Spring Security with JWT
 - MySQL 8
+- Hibernate
 - Maven
-- Lombok
-- Hibernate/JPA
+- Docker
+- Caffeine Cache
+- Bucket4j for Rate Limiting
 
 ## Prerequisites
 
-- Java 21 or higher
-- MySQL 8.0 or higher
+- JDK 21
 - Maven 3.x
+- MySQL 8.x
+- Docker (for production deployment)
 
-## Setup & Installation
+## Local Development Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/AronnoDIU/Expense-Tracking-API.git
-   cd Expense-Tracking-API
-   ```
+1. Clone the repository:
+```bash
+git clone https://github.com/AronnoDIU/Expense-Tracking-API.git
+cd Expense-Tracking-API
+```
 
-2. **Configure MySQL**
-   - Create a database named `expense_tracking`
-   - Update `src/main/resources/application.properties` with your MySQL credentials if different
+2. Configure MySQL:
+```sql
+CREATE DATABASE expense_tracking;
+```
 
-3. **Update JWT Secret**
-   - In `application.properties`, update the JWT secret key:
-     ```properties
-     jwt.secret=your_secure_secret_key_here
-     ```
+3. Update application.properties with your database credentials:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
 
-4. **Build the project**
-   ```bash
-   mvn clean install
-   ```
-
-5. **Run the application**
-   ```bash
-   mvn spring-boot:run
-   ```
+4. Build and run:
+```bash
+mvn clean install
+mvn spring-boot:run
+```
 
 The API will be available at `http://localhost:8080/api/v1`
 
-## API Documentation
+## API Endpoints
 
 ### Authentication
-- `POST /api/v1/auth/register` - Register a new user
-  ```json
-  {
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john.doe@example.com",
-    "password": "password123",
-    "dateOfBirth": "1990-01-01",
-    "role": "USER",
-    "phoneNumber": "1234567890",
-    "address": "123 Main St"
-  }
-  ```
+- POST `/api/v1/auth/register` - Register new user
+- POST `/api/v1/auth/login` - Login user
 
-- `POST /api/v1/auth/login` - Login and get JWT token
-  ```json
-  {
-    "email": "john.doe@example.com",
-    "password": "password123"
-  }
-  ```
-  Response:
-  ```json
-  {
-    "jwtToken": "eyJhbGciOiJIUzUxMiJ9..."
-  }
-  ```
+### User Management
+- GET `/api/v1/user/profile` - Get user profile
+- PUT `/api/v1/user/profile` - Update user profile
+- DELETE `/api/v1/user/profile/delete` - Delete user
 
-### User Profile
-- `GET /api/v1/user/profile` - Get user profile
-- `PUT /api/v1/user/profile` - Update user profile
-- `DELETE /api/v1/user/profile` - Delete user account
-
-### Expenses
-- `GET /api/v1/expenses` - Get all expenses
-- `GET /api/v1/expenses/{id}` - Get expense by ID
-- `POST /api/v1/expenses` - Create new expense
-  ```json
-  {
-    "name": "Grocery Shopping",
-    "description": "Monthly groceries",
-    "amount": 150.50,
-    "category": "GROCERIES",
-    "date": "2025-04-11"
-  }
-  ```
-- `PUT /api/v1/expenses/{id}` - Update expense
-- `DELETE /api/v1/expenses/{id}` - Delete expense
-
-## Security
-
-- JWT-based authentication
-- Password encryption using BCrypt
-- Role-based authorization
-- Secure endpoints with Spring Security
-- Input validation and sanitization
-- Stateless session management
-
-## Error Handling
-
-The API uses a standardized error response format:
-```json
-{
-  "status": 400,
-  "message": "Error message here",
-  "timestamp": "2025-04-11T18:26:20+06:00"
-}
-```
-
-## Database Schema
-
-### Users Table
-- id (Primary Key)
-- first_name
-- last_name
-- email (Unique)
-- password (BCrypt encoded)
-- date_of_birth
-- role
-- phone_number
-- address
-- created_at
-- updated_at
-
-### Expenses Table
-- id (Primary Key)
-- expense_name
-- description
-- expense_amount
-- category
-- expense_date
-- user_id (Foreign Key)
-- created_at
-- updated_at
+### Expense Management
+- GET `/api/v1/expenses` - Get all expenses
+- GET `/api/v1/expenses/{id}` - Get expense by ID
+- POST `/api/v1/expenses` - Create new expense
+- PUT `/api/v1/expenses/{id}` - Update expense
+- DELETE `/api/v1/expenses/{id}` - Delete expense
 
 ## Production Deployment
 
@@ -196,31 +118,28 @@ The application will be available at `http://your-domain:8080/api/v1`
 ### Logs
 Logs are stored in `/var/log/expense-tracking/application.log`
 
-### Security Notes
-- Always change default passwords in production
-- Use HTTPS in production
-- Regularly update dependencies
-- Monitor application metrics and logs
-- Set up proper backup for the database
+### Security Features
+- JWT Authentication
+- Rate Limiting (100 requests per minute per client)
+- Secure Headers
+- HTTPS in production
+- Database connection pooling
+- Password encryption
+
+### Performance Features
+- Response Caching
+- Connection Pooling
+- Optimized JVM settings
+- Database indexing
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Author
-
-[YEASIR ARAFAT ARONNO](https://github.com/AronnoDIU)
-
-## Acknowledgments
-
-- Spring Boot Team
-- MySQL Team
-- All contributors
