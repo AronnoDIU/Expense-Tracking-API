@@ -2,8 +2,8 @@
 
 🚀 A state-of-the-art expense management system built with Spring Boot and MySQL, offering a secure and scalable RESTful API for seamless personal finance tracking. This enterprise-grade solution features JWT authentication, real-time expense monitoring, and comprehensive user management, empowering users to take control of their financial journey with confidence.
 
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/projects/jdk/17/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -12,16 +12,35 @@
 - User Authentication with JWT
 - Expense Management (CRUD operations)
 - Category Management
-- Rate Limiting
-- Caching for improved performance
+- Rate Limiting (20 requests/minute per endpoint)
+- Caffeine Caching with 60-minute expiration
+- Response Compression for better performance
 - Production-ready configuration
 - API Documentation
 - Monitoring with Spring Actuator
 
+## Performance Optimizations
+
+- **Caching Strategy**:
+  - Caffeine cache with 500 max entries
+  - 60-minute expiration time
+  - Cache statistics monitoring
+  - Smart cache key generation using authentication context
+
+- **Rate Limiting**:
+  - Token bucket algorithm using Bucket4j
+  - 20 requests per minute per endpoint
+  - Rate limit headers in responses
+
+- **Response Optimization**:
+  - Compression enabled for JSON/XML responses
+  - 1KB minimum compression threshold
+  - Optimized cache headers
+
 ## Tech Stack
 
-- Java 21
-- Spring Boot 3.4.4
+- Java 17
+- Spring Boot 3.2.3
 - Spring Security with JWT
 - MySQL 8
 - Hibernate
@@ -32,7 +51,7 @@
 
 ## Prerequisites
 
-- JDK 21
+- JDK 17
 - Maven 3.x
 - MySQL 8.x
 - Docker (for production deployment)
@@ -50,11 +69,11 @@ cd Expense-Tracking-API
 CREATE DATABASE expense_tracking;
 ```
 
-3. Update application.properties with your database credentials:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracking
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+3. Configure environment variables:
+```bash
+export MYSQL_URL=jdbc:mysql://localhost:3306/expense_tracking
+export MYSQL_USERNAME=your_username
+export MYSQL_PASSWORD=your_password
 ```
 
 4. Build and run:
@@ -72,13 +91,13 @@ The API will be available at `http://localhost:8080/api/v1`
 - POST `/api/v1/auth/login` - Login user
 
 ### User Management
-- GET `/api/v1/user/profile` - Get user profile
+- GET `/api/v1/user/profile` - Get user profile (cached)
 - PUT `/api/v1/user/profile` - Update user profile
-- DELETE `/api/v1/user/profile/delete` - Delete user
+- DELETE `/api/v1/user/profile` - Delete user
 
 ### Expense Management
-- GET `/api/v1/expenses` - Get all expenses
-- GET `/api/v1/expenses/{id}` - Get expense by ID
+- GET `/api/v1/expenses` - Get all expenses (cached)
+- GET `/api/v1/expenses/{id}` - Get expense by ID (cached)
 - POST `/api/v1/expenses` - Create new expense
 - PUT `/api/v1/expenses/{id}` - Update expense
 - DELETE `/api/v1/expenses/{id}` - Delete expense
@@ -87,7 +106,7 @@ The API will be available at `http://localhost:8080/api/v1`
 
 ### Prerequisites
 - Docker and Docker Compose installed
-- JDK 21 for building
+- JDK 17 for building
 - Maven for building
 
 ### Build and Deploy
@@ -97,49 +116,47 @@ The API will be available at `http://localhost:8080/api/v1`
 mvn clean package -DskipTests
 ```
 
-2. Configure environment variables:
-Edit the `docker-compose.yml` file and update the following environment variables:
-- PROD_DB_USERNAME
-- PROD_DB_PASSWORD
-- JWT_SECRET
-- MYSQL_ROOT_PASSWORD
-
-3. Start the application:
+2. Run with Docker Compose:
 ```bash
 docker-compose up -d
 ```
 
-The application will be available at `http://your-domain:8080/api/v1`
+## Performance Monitoring
 
-### Monitoring
-- Health check endpoint: `/api/v1/actuator/health`
-- Metrics endpoint: `/api/v1/actuator/metrics`
+The application exposes several endpoints for monitoring:
 
-### Logs
-Logs are stored in `/var/log/expense-tracking/application.log`
+- `/actuator/health` - System health information
+- `/actuator/metrics` - Metrics including cache statistics
+- `/actuator/prometheus` - Prometheus metrics
 
-### Security Features
-- JWT Authentication
-- Rate Limiting (100 requests per minute per client)
-- Secure Headers
-- HTTPS in production
-- Database connection pooling
-- Password encryption
+## Cache Management
 
-### Performance Features
-- Response Caching
-- Connection Pooling
-- Optimized JVM settings
-- Database indexing
+The application uses Caffeine cache with the following configuration:
+
+```yaml
+spring:
+  cache:
+    cache-names: users,expenses,categories
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=60m
+```
+
+## Rate Limiting
+
+Rate limiting is configured per endpoint with the following defaults:
+- 20 requests per minute
+- Rate limit headers included in responses:
+  - X-Rate-Limit-Remaining
+  - X-Rate-Limit-Retry-After-Seconds
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
